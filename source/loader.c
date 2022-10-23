@@ -5,7 +5,7 @@ static ReadVoicePacketType* read_voice_packet_orig;
 static READ_VOICE_PACKET(ReadVoicePacketHook) {
 	u8* data = (u8*) decrypted_data;
 	if (data[0] == 0xBE && data[1] == 0xDE) {
-		u32 size_in_dwords = data[3] | data[2] << 8;
+		u16 size_in_dwords = data[3] | data[2] << 8;
 		if (size_in_dwords > 1) {
 			u32 size = size_in_dwords * 4 - 4;
 			return read_voice_packet_orig(_this, data + size, original_size - size_in_dwords - 1, a4, a5, a6, encrypted_size);
