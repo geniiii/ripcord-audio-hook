@@ -10,4 +10,4 @@ Download the ZIP file from [the Releases tab](https://github.com/geniiii/ripcord
 2. Run `build.bat`
 
 ## Credits
-@p0358 for writing [Northstar's `loader_wsock32_proxy`](https://github.com/R2Northstar/NorthstarLauncher/tree/main/loader_wsock32_proxy)
+[@p0358](https://github.com/p0358) for writing [Northstar's `loader_wsock32_proxy`](https://github.com/R2Northstar/NorthstarLauncher/tree/main/loader_wsock32_proxy)
