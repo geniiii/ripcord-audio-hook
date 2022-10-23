@@ -27,12 +27,12 @@ BOOL WINAPI DllMain(HINSTANCE inst, DWORD reason, LPVOID reserved) {
 		lib_handle = LoadLibraryExW(buffer, 0, LOAD_WITH_ALTERED_SEARCH_PATH);
 
 		funcs[Func_NetServerStatisticsGet] = GetProcAddress(lib_handle, "NetServerStatisticsGet");
-		funcs[Func_NetpsNameCanonicalize] = GetProcAddress(lib_handle, "NetpsNameCanonicalize");
-		funcs[Func_NetpsNameCompare] = GetProcAddress(lib_handle, "NetpsNameCompare");
-		funcs[Func_NetpsNameValidate] = GetProcAddress(lib_handle, "NetpsNameValidate");
-		funcs[Func_NetpsPathCanonicalize] = GetProcAddress(lib_handle, "NetpsPathCanonicalize");
-		funcs[Func_NetpsPathCompare] = GetProcAddress(lib_handle, "NetpsPathCompare");
-		funcs[Func_NetpsPathType] = GetProcAddress(lib_handle, "NetpsPathType");
+		funcs[Func_NetpsNameCanonicalize]  = GetProcAddress(lib_handle, "NetpsNameCanonicalize");
+		funcs[Func_NetpsNameCompare]       = GetProcAddress(lib_handle, "NetpsNameCompare");
+		funcs[Func_NetpsNameValidate]      = GetProcAddress(lib_handle, "NetpsNameValidate");
+		funcs[Func_NetpsPathCanonicalize]  = GetProcAddress(lib_handle, "NetpsPathCanonicalize");
+		funcs[Func_NetpsPathCompare]       = GetProcAddress(lib_handle, "NetpsPathCompare");
+		funcs[Func_NetpsPathType]          = GetProcAddress(lib_handle, "NetpsPathType");
 	} else if (reason == DLL_PROCESS_DETACH) {
 		FreeLibrary(lib_handle);
 	}
