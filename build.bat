@@ -37,7 +37,7 @@ if "%compiler%"=="clang-cl.exe" (
 	set compile_flags=%compile_flags% /experimental:external /external:W0
 )
 
-set common_link_flags= gdi32.lib Shlwapi.lib user32.lib winmm.lib netapi32.lib Shell32.lib Ole32.lib Psapi.lib -opt:ref
+set common_link_flags= Shlwapi.lib netapi32.lib Psapi.lib -opt:ref
 if "%build_type%"=="debug" (
 	set link_flags=%common_link_flags% /Debug:full
 ) else (
