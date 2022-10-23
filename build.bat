@@ -24,7 +24,7 @@ set arch=x64
 set build_options= /D _CRT_SECURE_NO_WARNINGS
 
 if "%compiler%"=="clang-cl.exe" (set external_flag=/imsvc) else (set external_flag=/external:I)
-set external_includes= %external_flag% ../source/ext/ %external_flag%
+set external_includes= %external_flag% ../source/ext/
 set common_compile_flags= /utf-8 /TC /std:c17 /nologo /Zi /FC /W4 /GR- /EHsc /I ../source/ %external_includes%
 if "%build_type%"=="debug" (
 	set compile_flags=%common_compile_flags% /MD
