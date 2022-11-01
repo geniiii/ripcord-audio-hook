@@ -46,7 +46,6 @@ if "%build_type%"=="debug" (
 
 if not exist build mkdir build
 pushd build
-start /b /wait "" ml64.exe /c /nologo /Zi /Fosrvcli.obj /W3 ../source/srvcli.asm
-start /b /wait "" %compiler% %build_options% %compile_flags% ../source/build_loader.c /LD /link %link_flags% srvcli.obj /DEF:../source/srvcli.def /out:srvcli.dll
-start /b /wait "" %compiler% %build_options% %compile_flags% ../source/build.c /LD /link %link_flags% /out:patch.dll
+start /b /wait "" ml64.exe /c /nologo /Zi /Fouxtheme.obj /W3 ../source/uxtheme.asm
+start /b /wait "" %compiler% %build_options% %compile_flags%  ../source/build.c /LD /link %link_flags% uxtheme.obj /DEF:../source/uxtheme.def /out:uxtheme.dll
 popd
