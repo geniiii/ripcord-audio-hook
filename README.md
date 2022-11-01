@@ -3,7 +3,7 @@ Fixes Ripcord reading RTP header extensions larger than 8 bytes as voice data, c
 Only supports Ripcord 0.4.29.
 
 ## Usage
-Download the ZIP file from [the Releases tab](https://github.com/geniiii/ripcord-audio-hook/releases) and extract the two DLLs inside into your Ripcord directory.
+Download the ZIP file from [the Releases tab](https://github.com/geniiii/ripcord-audio-hook/releases) and extract the DLL inside into your Ripcord directory.
 
 ## Building
 1. Install Visual Studio 2019+
