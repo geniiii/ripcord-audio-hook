@@ -26,6 +26,7 @@
 #include <Shlwapi.h>
 #include "ext/minhook/MinHook.c"
 #include <stdint.h>
+#include <stdio.h>
 
 typedef int8_t    i8;
 typedef int16_t   i16;
@@ -36,5 +37,6 @@ typedef uint16_t  u16;
 typedef uint32_t  u32;
 typedef uint64_t  u64;
 
+#include "util.c"
 #include "hook.c"
 #include "main.c"
