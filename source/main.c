@@ -5,10 +5,8 @@ enum {
 	Func_Count
 };
 
-static FARPROC funcs[Func_Count];
+static FARPROC   funcs[Func_Count];
 static HINSTANCE lib_handle;
-
-#define HIJACKED_DLL "UxTheme.dll"
 
 BOOL WINAPI DllMain(HINSTANCE inst, DWORD reason, LPVOID reserved) {
 	(void) inst;
@@ -28,7 +26,7 @@ BOOL WINAPI DllMain(HINSTANCE inst, DWORD reason, LPVOID reserved) {
 #define Proxy(name) funcs[Func_##name] = GetProcAddress(lib_handle, #name);
 #include "proxied.inc"
 #undef  Proxy
-		
+
 		return LoadHooks();
 	} else if (reason == DLL_PROCESS_DETACH) {
 		FreeLibrary(lib_handle);

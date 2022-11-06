@@ -37,6 +37,9 @@ typedef uint16_t  u16;
 typedef uint32_t  u32;
 typedef uint64_t  u64;
 
+#define HIJACKED_DLL      "UxTheme.dll"
+#define SUPPORTED_VERSION "0.4.29"
+
 #include "util.c"
 #include "hook.c"
 #include "main.c"

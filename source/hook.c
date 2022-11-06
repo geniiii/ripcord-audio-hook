@@ -42,8 +42,15 @@ static u32 LoadHooks() {
 	MODULEINFO module_info;
 	GetModuleInformation(GetCurrentProcess(), GetModuleHandleA("Ripcord.exe"), &module_info, sizeof module_info);
 
+	for (u32 i = 0; i < sizeof SUPPORTED_VERSION; ++i) {
+		if (*((u8*) module_info.lpBaseOfDll + 0x3BAB70 + i) != SUPPORTED_VERSION[i]) {
+			ErrorMessage("Unsupported Ripcord version (expected " SUPPORTED_VERSION ")");
+			return 0;
+		}
+	}
+
 	u32 result = 1;
-	result &= CreateAndEnableHook((u8*) module_info.lpBaseOfDll, 0xD0DF0, (LPVOID) &ReadVoicePacketHook, (LPVOID*) &read_voice_packet_orig);
+	result &= CreateAndEnableHook(module_info.lpBaseOfDll, 0xD0DF0, (LPVOID) &ReadVoicePacketHook, (LPVOID*) &read_voice_packet_orig);
 
 	return result;
 }
