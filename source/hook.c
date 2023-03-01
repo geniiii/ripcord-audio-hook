@@ -56,8 +56,8 @@ static u32 CreateAndEnableHook(u8* base, u64 ptr, void* hook, void** orig) {
 static void PatchByte(u8* base, u64 ptr, u8 new) {
     DWORD old_protect;
     u8* addr = (u8*) base + ptr;
-    VirtualProtect(base + ptr, 1, PAGE_EXECUTE_READWRITE, &old_protect);
-    base[ptr] = new;
+    VirtualProtect(addr, 1, PAGE_EXECUTE_READWRITE, &old_protect);
+    *addr = new;
     VirtualProtect(addr, 1, old_protect, &old_protect);
 }
 
