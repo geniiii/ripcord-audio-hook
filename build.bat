@@ -37,7 +37,7 @@ if "%compiler%"=="clang-cl.exe" (
 	set compile_flags=%compile_flags% /experimental:external /external:W0
 )
 
-set common_link_flags= User32.lib Shlwapi.lib Psapi.lib -opt:ref
+set common_link_flags=User32.lib Shlwapi.lib Psapi.lib -opt:ref
 if "%build_type%"=="debug" (
 	set link_flags=%common_link_flags% /Debug:full
 ) else (
@@ -46,6 +46,6 @@ if "%build_type%"=="debug" (
 
 if not exist build mkdir build
 pushd build
-start /b /wait "" ml64.exe /c /nologo /Zi /Fouxtheme.obj /W3 ../source/uxtheme.asm
-start /b /wait "" %compiler% %build_options% %compile_flags% ../source/build.c /LD /link %link_flags% uxtheme.obj /DEF:../source/uxtheme.def /out:UxTheme.dll
+ml64.exe /c /nologo /Zi /Fouxtheme.obj /W3 ../source/uxtheme.asm
+%compiler% %build_options% %compile_flags% ../source/build.c /LD /link %link_flags% uxtheme.obj /DEF:../source/uxtheme.def /out:UxTheme.dll
 popd

@@ -1,7 +1,27 @@
 #define READ_VOICE_PACKET(name) u64 name(void* this, u8* data, size_t original_size, u8 a4, u16 a5, u32 a6, u32 encrypted_size)
 typedef READ_VOICE_PACKET(ReadVoicePacketType);
 
+#define WRITE_DATAGRAM(name) i64 name(void* this, u8* data, i64 size, void* addr, u16 port)
+typedef WRITE_DATAGRAM(WriteDatagramType);
+
 static ReadVoicePacketType* read_voice_packet_orig;
+static WriteDatagramType* write_datagram_orig;
+
+static WRITE_DATAGRAM(WriteDatagramHook) {
+    // NOTE(geni): Ripcord appears to send what is likely an old version of this packet, which *only some* Discord servers seem to respond to.
+    //             See here: https://discord.com/developers/docs/topics/voice-connections#ip-discovery
+    if (size == 70) {
+        u32 ssrc = *((u32*) data);
+        data[0] = 0;
+        data[1] = 1;
+        data[2] = 0;
+        data[3] = 70;
+        ((u32*) data)[1] = ssrc;
+        return write_datagram_orig(this, data, 74, addr, port);
+    }
+
+    return write_datagram_orig(this, data, size, addr, port);
+}
 
 static READ_VOICE_PACKET(ReadVoicePacketHook) {
 	if (data[0] == 0xBE && data[1] == 0xDE) {
@@ -33,6 +53,14 @@ static u32 CreateAndEnableHook(u8* base, u64 ptr, void* hook, void** orig) {
 	return 1;
 }
 
+static void PatchByte(u8* base, u64 ptr, u8 new) {
+    DWORD old_protect;
+    u8* addr = (u8*) base + ptr;
+    VirtualProtect(base + ptr, 1, PAGE_EXECUTE_READWRITE, &old_protect);
+    base[ptr] = new;
+    VirtualProtect(addr, 1, old_protect, &old_protect);
+}
+
 static u32 LoadHooks() {
 	if (MH_Initialize() != MH_OK) {
 		ErrorMessage("Failed to initialize MinHook");
@@ -49,8 +77,15 @@ static u32 LoadHooks() {
 		}
 	}
 
+    PatchByte(module_info.lpBaseOfDll, 0xDE8D8, 74);
+    PatchByte(module_info.lpBaseOfDll, 0xDE8EA, 8);
+    PatchByte(module_info.lpBaseOfDll, 0xDE90C, 8);
+    PatchByte(module_info.lpBaseOfDll, 0xDE936, 72);
+
 	u32 result = 1;
 	result &= CreateAndEnableHook(module_info.lpBaseOfDll, 0xD0DF0, (LPVOID) &ReadVoicePacketHook, (LPVOID*) &read_voice_packet_orig);
+    u8* write_datagram_ptr = (u8*) GetProcAddress(GetModuleHandleA("Qt5Network.dll"), "?writeDatagram@QUdpSocket@@QEAA_JPEBD_JAEBVQHostAddress@@G@Z");
+    result &= CreateAndEnableHook(0, (u64) write_datagram_ptr, (LPVOID) &WriteDatagramHook, (LPVOID*) &write_datagram_orig);
 
 	return result;
 }
