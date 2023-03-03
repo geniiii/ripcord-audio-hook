@@ -11,7 +11,7 @@ static HINSTANCE lib_handle;
 BOOL WINAPI DllMain(HINSTANCE inst, DWORD reason, LPVOID reserved) {
 	(void) inst;
 	(void) reserved;
-	
+
 	if (reason == DLL_PROCESS_ATTACH) {
 		wchar_t buffer[32768];
 		GetSystemDirectoryW(buffer, 32768 - sizeof HIJACKED_DLL - 2);
@@ -22,7 +22,7 @@ BOOL WINAPI DllMain(HINSTANCE inst, DWORD reason, LPVOID reserved) {
 			// NOTE(geni): Since we're hijacking UxTheme, MessageBox will probably silently fail, so..
 			return 0;
 		}
-		
+
 #define Proxy(name) funcs[Func_##name] = GetProcAddress(lib_handle, #name);
 #include "proxied.inc"
 #undef  Proxy
@@ -31,7 +31,7 @@ BOOL WINAPI DllMain(HINSTANCE inst, DWORD reason, LPVOID reserved) {
 	} else if (reason == DLL_PROCESS_DETACH) {
 		FreeLibrary(lib_handle);
 	}
-	
+
 	return 1;
 }
 
