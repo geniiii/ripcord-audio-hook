@@ -6,9 +6,10 @@ Fixes Ripcord:
 Only supports Ripcord 0.4.29 on Windows.
 
 ## Usage
-Download the DLL file from [the Releases tab](https://github.com/geniiii/ripcord-audio-hook/releases) and place it in your Ripcord directory.
+Download the DLL file from [the Releases page](https://github.com/geniiii/ripcord-audio-hook/releases) and place it in your Ripcord directory.
 
 ## Building
+**If you don't know what you're doing, look at the Usage section above instead.**
 1. Install Visual Studio 2019 or newer
 2. Run `build.bat`
 
