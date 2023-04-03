@@ -1,0 +1,58 @@
+Language: Cpp
+BasedOnStyle: Chromium
+IndentWidth: 4
+UseTab: Never
+BinPackParameters: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortBlocksOnASingleLine: Always
+CommentPragmas: '.\/[\*(\/\/)]+(.+\n.+)+\*\/'
+ColumnLimit: 0
+AlignConsecutiveDeclarations: true
+AlignConsecutiveAssignments: true
+AlignConsecutiveMacros: AcrossEmptyLines
+AlignEscapedNewlines: Right
+AlignArrayOfStructures: Right
+AlignConsecutiveBitFields: Consecutive
+AlignTrailingComments: true
+AlignAfterOpenBracket: true
+AllowShortFunctionsOnASingleLine: All
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: true
+AllowShortLoopsOnASingleLine: true
+AlignOperands: true
+SpaceAfterCStyleCast: true
+SortIncludes: Never
+IncludeBlocks: Preserve
+StatementMacros:
+  - "AllR8"
+  - "Flags"
+  - "CreateAllR8NoA"
+  - "CreateAllR8"
+  - "CreateAllR16NoHL"
+  - "CreateAllR16"
+  - "SubA"
+  - "AddA"
+  - "SubCarryA"
+  - "AddCarryA"
+  - "CompareA"
+  - "BitwiseA"
+  - "BitwiseOpA"
+  - "SetBitX8"
+  - "SetBitsX8"
+  - "ResetBitX8"
+  - "ResetBitsX8"
+  - "TestBitX8"
+  - "TestBitsX8"
+  - "JumpConditional"
+  - "JumpConditionalRelative"
+  - "CallConditional"
+  - "RetConditional"
+  - "AllR8HL"
+  - "PopR16"
+  - "PushR16"
+  - "LoadR8R8"
+  - "LoadDerefR16R8"
+  - "LoadR8DerefR16"
+  - "Callbacks"
+  - "GLProc"
+  - "Input"
