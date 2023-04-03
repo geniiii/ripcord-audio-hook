@@ -3,7 +3,7 @@ Fixes Ripcord:
 1. reading RTP header extensions larger than 8 bytes as voice data, causing garbled audio in voice chats
 2. sending and receiving an old (?) version of the IP discovery packet, causing it to get stuck on "Routing..." when attempting to join voice channels
 
-Only supports Ripcord 0.4.29 on Windows.
+Supports Ripcord 0.4.29 on Windows. [Partially supports Ripcord 0.4.29 on Linux.](https://github.com/geniiii/ripcord-audio-hook/tree/linux)
 
 ## Usage
 Download the DLL file from [the Releases page](https://github.com/geniiii/ripcord-audio-hook/releases) and place it in your Ripcord directory.
