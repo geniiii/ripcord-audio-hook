@@ -2,6 +2,7 @@
 Fixes Ripcord:
 1. reading RTP header extensions larger than 8 bytes as voice data, causing garbled audio in voice chats
 2. sending and receiving an old (?) version of the IP discovery packet, causing it to get stuck on "Routing..." when attempting to join voice channels
+3. not showing "Stage" voice channels
 
 ## Usage
 For `hook.so`, see [Building](#Building). I don't distribute binaries as I have no idea what the proper way to do it is on Linux.
