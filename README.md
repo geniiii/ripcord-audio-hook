@@ -4,7 +4,7 @@ Fixes Ripcord:
 2. sending and receiving an old (?) version of the IP discovery packet, causing it to get stuck on "Routing..." when attempting to join voice channels
 3. not showing "Stage" voice channels
 
-Supports Ripcord 0.4.29 on Windows. [Partially supports Ripcord 0.4.29 on Linux.](https://github.com/geniiii/ripcord-audio-hook/tree/linux)
+Supports Ripcord 0.4.29 on Windows. [Supports Ripcord 0.4.29 on Linux, albeit with limited testing.](https://github.com/geniiii/ripcord-audio-hook/tree/linux)
 
 ## Usage
 Download the DLL file from [the Releases page](https://github.com/geniiii/ripcord-audio-hook/releases) and place it in your Ripcord directory.
