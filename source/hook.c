@@ -113,7 +113,7 @@ static u32 LoadHooks() {
     PatchByte(rip_base, 0xDE8EA, 8);
     PatchByte(rip_base, 0xDE90C, 8);
     PatchByte(rip_base, 0xDE936, 72);
-    memcpy((PVOID)(rip_base + 0x3E63F0), "https://cdn.discordapp.com/", sizeof("https://cdn.discordapp.com/") - 1);
+    memcpy((PVOID)(rip_base + 0x3E63F0), "https://cdn.discordapp.com/", sizeof("https://cdn.discordapp.com/"));
     
     u32 result = 1;
     result &= CreateAndEnableHook(rip_base, 0xD0DF0, (LPVOID) &ReadVoicePacketHook, (LPVOID*) &read_voice_packet_orig);
