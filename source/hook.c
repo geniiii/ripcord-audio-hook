@@ -113,7 +113,8 @@ static u32 LoadHooks() {
     PatchByte(rip_base, 0xDE8EA, 8);
     PatchByte(rip_base, 0xDE90C, 8);
     PatchByte(rip_base, 0xDE936, 72);
-
+    memcpy((PVOID)(rip_base + 0x3E63F0), "https://cdn.discordapp.com/", sizeof("https://cdn.discordapp.com/") - 1);
+    
     u32 result = 1;
     result &= CreateAndEnableHook(rip_base, 0xD0DF0, (LPVOID) &ReadVoicePacketHook, (LPVOID*) &read_voice_packet_orig);
     u64 write_datagram_addr = (u64) GetProcAddress(GetModuleHandleA("Qt5Network.dll"), "?writeDatagram@QUdpSocket@@QEAA_JPEBD_JAEBVQHostAddress@@G@Z");
