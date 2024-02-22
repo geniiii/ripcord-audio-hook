@@ -17,6 +17,8 @@ typedef uint16_t u16;
 typedef uint32_t u32;
 typedef uint64_t u64;
 
+#include "string8.c"
+
 typedef struct {
     u8* data;
     u64 size_as_4;
@@ -127,15 +129,31 @@ static void PatchByte(u8* addr, u8 value) {
     printf("Patched %p: %x\n", addr, value);
 }
 
+static void PatchString(u8* addr, String8 value) {
+    printf("Original %p: %s\n", addr, (char*) addr);
+    u32 page_size = sysconf(_SC_PAGE_SIZE);
+    u8* page_addr = (u8*) ((u64) addr & ~(page_size - 1));
+    if (mprotect(page_addr, page_size, PROT_READ | PROT_WRITE | PROT_EXEC) == -1) {
+        puts("mprotect failed");
+    }
+    memcpy(addr, value.data, value.size);
+    printf("Patched %p: %.*s\n", addr, value.size, (char*) addr);
+}
+
 static __attribute__((constructor)) void OnAttach(void) {
-    u8* receive_udp = (u8*) (0x400000 + 0x155870);
+    u8* base = (u8*) 0x400000;
+
+    u8* receive_udp = base + 0x155870;
     PatchByte(receive_udp + 0x102, 74);
     PatchByte(receive_udp + 0x110, 8);
     PatchByte(receive_udp + 0x172, 72);
     puts("Patched bytes");
 
-    read_voice_data_packet_orig = (ReadVoiceDataPacketType*) (0x400000 + 0x1557B0);
-    erf_map_find_orig           = (ErfMapFindType*) (0x400000 + 0x1216B0);
+    PatchString(base + 0x4E997D, S8Lit("cdn.discordapp.com/\0\0\0"));
+    puts("Patched media URL");
+
+    read_voice_data_packet_orig = (ReadVoiceDataPacketType*) (base + 0x1557B0);
+    erf_map_find_orig           = (ErfMapFindType*) (base + 0x1216B0);
     funchook_t* funchook        = funchook_create();
 
     i32 err = funchook_prepare(funchook, (void**) &read_voice_data_packet_orig, ReadVoiceDataPacketHook);

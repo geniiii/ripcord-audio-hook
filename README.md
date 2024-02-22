@@ -4,6 +4,7 @@ Fixes Ripcord:
 2. sending and receiving an old (?) version of the IP discovery packet, causing it to get stuck on "Routing..." when attempting to join voice channels
 3. not showing "Stage" voice channels  
    *(This is accomplished by making Ripcord think stages are regular voice channels. This means that there is no way to become a speaker, and no way to differentiate a stage from a regular voice channel)*
+4. not loading image previews
 
 ## Usage
 For `hook.so`, see [Building](#Building). I don't distribute binaries as I have no idea what the proper way to do it is on Linux.
@@ -15,3 +16,6 @@ For `hook.so`, see [Building](#Building). I don't distribute binaries as I have 
 ## Building
 1. Build and install [funchook](https://github.com/kubo/funchook).
 2. `gcc -shared -fPIC -o hook.so hook.c -ldl -lfunchook` (or the equivalent command for your compiler of choice)
+
+## Credits
+[@u130b8](https://github.com/u130b8) for fixing image previews
