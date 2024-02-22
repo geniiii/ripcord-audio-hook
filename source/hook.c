@@ -92,6 +92,14 @@ static void PatchByte(u8* base, u64 ptr, u8 new) {
     VirtualProtect(addr, 1, old_protect, &old_protect);
 }
 
+static void PatchString(u8* base, u64 ptr, String8 new) {
+    DWORD old_protect;
+    u8*   addr = base + ptr;
+    VirtualProtect(addr, new.size, PAGE_EXECUTE_READWRITE, &old_protect);
+    CopyMemory(addr, new.data, new.size);
+    VirtualProtect(addr, new.size, old_protect, &old_protect);
+}
+
 static u32 LoadHooks() {
     if (MH_Initialize() != MH_OK) {
         ErrorMessage("Failed to initialize MinHook");
@@ -113,6 +121,9 @@ static u32 LoadHooks() {
     PatchByte(rip_base, 0xDE8EA, 8);
     PatchByte(rip_base, 0xDE90C, 8);
     PatchByte(rip_base, 0xDE936, 72);
+
+    // NOTE(geni): Fixes image previews not loading. Thanks u130b8!
+    PatchString(rip_base, 0x3E63F8, S8Lit("cdn.discordapp.com/\0\0\0"));
 
     u32 result = 1;
     result &= CreateAndEnableHook(rip_base, 0xD0DF0, (LPVOID) &ReadVoicePacketHook, (LPVOID*) &read_voice_packet_orig);
