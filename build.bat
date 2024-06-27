@@ -50,6 +50,5 @@ if "%build_type%"=="debug" (
 
 if not exist build mkdir build
 pushd build
-ml64.exe /c /nologo /Zi /Fouxtheme.obj /W3 ../source/uxtheme.asm
-%compiler% %build_options% %compile_flags% ../source/build.c /LD /link %link_flags% uxtheme.obj /DEF:../source/uxtheme.def /out:UxTheme.dll
+%compiler% %build_options% %compile_flags% ../source/build.c /LD /link %link_flags% /out:profapi.dll
 popd
