@@ -19,4 +19,4 @@ Download the DLL file from [the Releases page](https://github.com/geniiii/ripcor
 ## Credits
 [@p0358](https://github.com/p0358) for writing [Northstar's `loader_wsock32_proxy`](https://github.com/R2Northstar/NorthstarLauncher/tree/main/loader_wsock32_proxy)  
 [@u130b8](https://github.com/u130b8) for fixing image previews  
-[@ouwou](https://github.com/ouwou) for determining the cause of garbled audio and suggesting hijacking `Profapi.dll`
+[@ouwou](https://github.com/ouwou) for determining the cause of garbled audio and suggesting hijacking `profapi.dll`
