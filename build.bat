@@ -50,5 +50,6 @@ if "%build_type%"=="debug" (
 
 if not exist build mkdir build
 pushd build
-%compiler% %build_options% %compile_flags% ../source/build.c /LD /link %link_flags% /out:profapi.dll
+ml64.exe /c /nologo /Zi /Foprofapi.obj /W3 ../source/proxy.asm
+%compiler% %build_options% %compile_flags% ../source/build.c /LD /link %link_flags% profapi.obj /DEF:../source/profapi.def /out:profapi.dll
 popd
