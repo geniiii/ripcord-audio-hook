@@ -15,5 +15,3 @@ Proxy(GetAppContainerRegistryHandleFromName, 114)
 Proxy(GetAppContainerPathFromSidString, 115)
 Proxy(GetBasicProfileFolderPathEx, 116)
 Proxy(GetBasicProfileFolderPathAlloc, 117)
-
-
