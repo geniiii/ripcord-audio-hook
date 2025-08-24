@@ -1,10 +1,7 @@
-enum {
-#define Proxy(name, ...) Func_##name,
+#define Proxy(name) static FARPROC Func_##name;
 #include "proxied.inc"
 #undef  Proxy
-	Func_Count
-};
-static FARPROC   funcs[Func_Count];
+
 static HINSTANCE lib_handle;
 BOOL WINAPI DllMain(HINSTANCE inst, DWORD reason, LPVOID reserved) {
 	(void) inst;
@@ -20,7 +17,7 @@ BOOL WINAPI DllMain(HINSTANCE inst, DWORD reason, LPVOID reserved) {
 			ErrorMessage("Failed to hijack " HIJACKED_DLL ".");
 			return 0;
 		}
-#define Proxy(name, ordinal) funcs[Func_##name] = GetProcAddress(lib_handle, MAKEINTRESOURCEA(ordinal));
+#define Proxy(name) Func_##name = GetProcAddress(lib_handle, #name);
 #include "proxied.inc"
 #undef  Proxy
 		return LoadHooks();
@@ -30,9 +27,7 @@ BOOL WINAPI DllMain(HINSTANCE inst, DWORD reason, LPVOID reserved) {
 
 	return 1;
 }
-//~ ASM proxy
-FARPROC ProcAddr;
-extern int JMPToProc();
-#define Proxy(name, ...) void PROXY_##name() { ProcAddr = funcs[Func_##name]; JMPToProc(); }
+
+#define Proxy(name) void PROXY_##name() { Func_##name(); }
 #include "proxied.inc"
 #undef  Proxy

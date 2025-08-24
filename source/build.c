@@ -1,4 +1,3 @@
-#define UNICODE
 #define VC_EXTRALEAN
 #define NOATOM
 #define NOHELP
@@ -37,7 +36,7 @@ typedef uint16_t u16;
 typedef uint32_t u32;
 typedef uint64_t u64;
 
-#define HIJACKED_DLL      "profapi.dll"
+#define HIJACKED_DLL      "winmm.dll"
 #define SUPPORTED_VERSION "0.4.29"
 
 #include "util.c"

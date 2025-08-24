@@ -125,6 +125,10 @@ static u32 LoadHooks() {
     // NOTE(geni): Fixes image previews not loading. Thanks u130b8!
     PatchString(rip_base, 0x3E63F8, S8Lit("cdn.discordapp.com/\0\0\0"));
 
+    // NOTE(geni): Discard invalid map keys instead of aborting. Thanks @muffinlord on Discord!
+    PatchByte(rip_base, 0xB9BBF, 0xEB);
+    PatchByte(rip_base, 0xB9BC0, 0x80);
+
     u32 result = 1;
     result &= CreateAndEnableHook(rip_base, 0xD0DF0, (LPVOID) &ReadVoicePacketHook, (LPVOID*) &read_voice_packet_orig);
     u64 write_datagram_addr = (u64) GetProcAddress(GetModuleHandleA("Qt5Network.dll"), "?writeDatagram@QUdpSocket@@QEAA_JPEBD_JAEBVQHostAddress@@G@Z");
