@@ -33,7 +33,6 @@ static u32 guilds_count;
 static UPDATEUSERGUILDPOSITIONS(UpdateUserGuildPositionsHook) {
     RipStmt orderQ;
     RipStmt deleteQ;
-    FlakeId guildId;
 
     if (comStmts) {
         disdbprepared_begintx(comStmts);
@@ -43,7 +42,6 @@ static UPDATEUSERGUILDPOSITIONS(UpdateUserGuildPositionsHook) {
     ripstmt_step(&deleteQ);
     ripstmt_reset(&deleteQ);
     ripstmt_destructor(&deleteQ);
-    u32 v6 = 0;
     ripstmt_constructor(
         &orderQ,
         comStmts->db,
@@ -52,10 +50,9 @@ static UPDATEUSERGUILDPOSITIONS(UpdateUserGuildPositionsHook) {
     for (u32 i = 0; i < guilds_count; ++i) {
         ripstmt_bind_u64(&orderQ, 1, userId.u);
         ripstmt_bind_u64(&orderQ, 2, guilds[i]);
-        ripstmt_bind_u64(&orderQ, 3, v6);
+        ripstmt_bind_u64(&orderQ, 3, i);
         ripstmt_step(&orderQ);
         ripstmt_reset(&orderQ);
-        ++v6;
     }
     ripstmt_destructor(&orderQ);
     disdbprepared_endtx(comStmts);
@@ -77,7 +74,7 @@ static ERF_MAP_FIND(ErfMapFindHook) {
             new_out.tag == ErfTag_Arr) {
             ErfArr arr          = new_out.arr;
             ErfMap guild_folder = {0};
-            for (u32 i = 0; i < arr.count; ++i) {
+            for (i32 i = 0; i < arr.count; ++i) {
                 erf_arr_at(&arr, &new_out, i);
                 if (new_out.tag != ErfTag_Map) {
                     continue;
@@ -86,7 +83,7 @@ static ERF_MAP_FIND(ErfMapFindHook) {
 
                 if (erf_map_find(&guild_folder, "guild_ids", 9, &new_out) && new_out.tag == ErfTag_Arr) {
                     ErfArr guild_ids = new_out.arr;
-                    for (u32 j = 0; j < guild_ids.count; ++j) {
+                    for (i32 j = 0; j < guild_ids.count; ++j) {
                         erf_arr_at(&guild_ids, &new_out, j);
                         if (new_out.tag == ErfTag_Uint64) {
                             u64 guild_id           = new_out.uint64;
