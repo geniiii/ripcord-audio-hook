@@ -35,11 +35,17 @@ typedef uint8_t  u8;
 typedef uint16_t u16;
 typedef uint32_t u32;
 typedef uint64_t u64;
+typedef float    f32;
+typedef double   f64;
 
 #define HIJACKED_DLL      "winmm.dll"
 #define SUPPORTED_VERSION "0.4.29"
 
 #include "util.c"
 #include "string8.c"
+#include "qt/functions.h"
+#include "qt/types.h"
+#include "ripcord/types.h"
+#include "ripcord/functions.h"
 #include "hook.c"
 #include "main.c"

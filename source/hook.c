@@ -1,31 +1,3 @@
-enum {
-    ErfMapAny_Num = 2,
-};
-
-enum {
-    DisChannelType_Voice = 2,
-    DisChannelType_Stage = 13,
-};
-
-typedef struct {
-    u32 tag;
-    u32 _unk;
-    u32 num;
-} ErfMapAny;
-
-#define READ_VOICE_PACKET(name) u64 name(void* this, u8* data, u64 original_size, u8 a4, u16 a5, u32 a6, u32 encrypted_size)
-typedef READ_VOICE_PACKET(ReadVoicePacketType);
-
-#define WRITE_DATAGRAM(name) i64 name(void* this, u8* data, i64 size, void* addr, u16 port)
-typedef WRITE_DATAGRAM(WriteDatagramType);
-
-#define ERF_MAP_FIND(name) u8 name(void* map, const char* key, u64 key_size, ErfMapAny* out)
-typedef ERF_MAP_FIND(ErfMapFindType);
-
-static ReadVoicePacketType* read_voice_packet_orig;
-static WriteDatagramType*   write_datagram_orig;
-static ErfMapFindType*      erf_map_find_orig;
-
 static WRITE_DATAGRAM(WriteDatagramHook) {
     // NOTE(geni): Ripcord appears to send what is likely an old version of this packet, which *only some* Discord servers seem to respond to.
     //             See here: https://discord.com/developers/docs/topics/voice-connections#ip-discovery
@@ -36,10 +8,10 @@ static WRITE_DATAGRAM(WriteDatagramHook) {
         data[2]          = 0;
         data[3]          = 70;
         ((u32*) data)[1] = ssrc;
-        return write_datagram_orig(this, data, 74, addr, port);
+        return write_datagram(this, data, 74, addr, port);
     }
 
-    return write_datagram_orig(this, data, size, addr, port);
+    return write_datagram(this, data, size, addr, port);
 }
 
 static READ_VOICE_PACKET(ReadVoicePacketHook) {
@@ -47,20 +19,83 @@ static READ_VOICE_PACKET(ReadVoicePacketHook) {
         u16 size_in_dwords = data[3] | data[2] << 8;
         if (size_in_dwords > 1) {
             --size_in_dwords;
-            return read_voice_packet_orig(this, data + size_in_dwords * 4, original_size - size_in_dwords, a4, a5, a6, encrypted_size);
+            return read_voice_packet(this, data + size_in_dwords * 4, original_size - size_in_dwords, a4, a5, a6, encrypted_size);
         }
     }
 
-    return read_voice_packet_orig(this, data, original_size, a4, a5, a6, encrypted_size);
+    return read_voice_packet(this, data, original_size, a4, a5, a6, encrypted_size);
+}
+
+// NOTE(geni): The current maximum on Discord's side is 200, so we'll be fine
+static u64 guilds[512];
+static u32 guilds_count;
+
+static UPDATEUSERGUILDPOSITIONS(UpdateUserGuildPositionsHook) {
+    RipStmt orderQ;
+    RipStmt deleteQ;
+    FlakeId guildId;
+
+    if (comStmts) {
+        disdbprepared_begintx(comStmts);
+    }
+    ripstmt_constructor(&deleteQ, comStmts->db, "\ndelete from user_guild_position\nwhere user_id = ?\n", 0i64);
+    ripstmt_bind_u64(&deleteQ, 1, userId.u);
+    ripstmt_step(&deleteQ);
+    ripstmt_reset(&deleteQ);
+    ripstmt_destructor(&deleteQ);
+    u32 v6 = 0;
+    ripstmt_constructor(
+        &orderQ,
+        comStmts->db,
+        "\nreplace into user_guild_position\n(user_id, guild_id, position)\nvalues (?, ?, ?)\n",
+        0i64);
+    for (u32 i = 0; i < guilds_count; ++i) {
+        ripstmt_bind_u64(&orderQ, 1, userId.u);
+        ripstmt_bind_u64(&orderQ, 2, guilds[i]);
+        ripstmt_bind_u64(&orderQ, 3, v6);
+        ripstmt_step(&orderQ);
+        ripstmt_reset(&orderQ);
+        ++v6;
+    }
+    ripstmt_destructor(&orderQ);
+    disdbprepared_endtx(comStmts);
 }
 
 static ERF_MAP_FIND(ErfMapFindHook) {
-    u8 result = erf_map_find_orig(map, key, key_size, out);
+    u8 result = erf_map_find(map, key, key_size, out);
 
     if (result && key_size == 4 &&
-        out->tag == ErfMapAny_Num && memcmp(key, "type", 4) == 0 &&
-        out->num == DisChannelType_Stage) {
-        out->num = DisChannelType_Voice;
+        out->tag == ErfTag_Int32 && memcmp(key, "type", 4) == 0 &&
+        out->int32 == DisChannelType_GuildVoiceStage) {
+        out->int32 = DisChannelType_GuildVoice;
+    } else {
+        ErfMapAny new_out = {.tag = ErfTag_Nil};
+        // NOTE(geni): We can probably just check return address instead and it would probably be faster
+        if (map && key_size == 15 &&
+            memcmp(key, "guild_positions", 15) == 0 &&
+            erf_map_find(map, "guild_folders", 13, &new_out) &&
+            new_out.tag == ErfTag_Arr) {
+            ErfArr arr          = new_out.arr;
+            ErfMap guild_folder = {0};
+            for (u32 i = 0; i < arr.count; ++i) {
+                erf_arr_at(&arr, &new_out, i);
+                if (new_out.tag != ErfTag_Map) {
+                    continue;
+                }
+                guild_folder = new_out.map;
+
+                if (erf_map_find(&guild_folder, "guild_ids", 9, &new_out) && new_out.tag == ErfTag_Arr) {
+                    ErfArr guild_ids = new_out.arr;
+                    for (u32 j = 0; j < guild_ids.count; ++j) {
+                        erf_arr_at(&guild_ids, &new_out, j);
+                        if (new_out.tag == ErfTag_Uint64) {
+                            u64 guild_id           = new_out.uint64;
+                            guilds[guilds_count++] = guild_id;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     return result;
@@ -133,10 +168,20 @@ static u32 LoadHooks() {
     PatchByte(rip_base, 0xD677E, 0x10);
 
     u32 result = 1;
-    result &= CreateAndEnableHook(rip_base, 0xD0DF0, (LPVOID) &ReadVoicePacketHook, (LPVOID*) &read_voice_packet_orig);
+    result &= CreateAndEnableHook(rip_base, 0xD0DF0, (LPVOID) &ReadVoicePacketHook, (LPVOID*) &read_voice_packet);
     u64 write_datagram_addr = (u64) GetProcAddress(GetModuleHandleA("Qt5Network.dll"), "?writeDatagram@QUdpSocket@@QEAA_JPEBD_JAEBVQHostAddress@@G@Z");
-    result &= CreateAndEnableHook(0, write_datagram_addr, (LPVOID) &WriteDatagramHook, (LPVOID*) &write_datagram_orig);
-    result &= CreateAndEnableHook(rip_base, 0xB9690, (LPVOID) &ErfMapFindHook, (LPVOID*) &erf_map_find_orig);
+    result &= CreateAndEnableHook(0, write_datagram_addr, (LPVOID) &WriteDatagramHook, (LPVOID*) &write_datagram);
+    result &= CreateAndEnableHook(rip_base, 0xB9690, (LPVOID) &ErfMapFindHook, (LPVOID*) &erf_map_find);
+    result &= CreateAndEnableHook(rip_base, 0xF9750, (LPVOID) &UpdateUserGuildPositionsHook, (LPVOID*) &update_user_guild_positions);
+
+    disdbprepared_begintx = (DisDbPreparedBegintxType*) (rip_base + 0xF62E0);
+    disdbprepared_endtx   = (DisDbPreparedEndtxType*) (rip_base + 0xF7070);
+    ripstmt_constructor   = (RipStmtConstructorType*) (rip_base + 0x2110);
+    ripstmt_destructor    = (RipStmtDestructorType*) (rip_base + 0x2230);
+    ripstmt_bind_u64      = (RipStmtBindU64Type*) (rip_base + 0x25D0);
+    ripstmt_step          = (RipStmtStepType*) (rip_base + 0x3440);
+    ripstmt_reset         = (RipStmtResetType*) (rip_base + 0x3420);
+    erf_arr_at            = (ErfArrAtType*) (rip_base + 0xD0EE0);
 
     return result;
 }
