@@ -4,8 +4,9 @@ Fixes Ripcord:
 2. reading RTP header extensions larger than 8 bytes as voice data, causing garbled audio in voice chats
 3. sending and receiving an old (?) version of the IP discovery packet, causing it to get stuck on "Routing..." when attempting to join voice channels
 4. creating malformed WebSocket gateway URIs, causing it to fail when connecting to voice channels
-5. not loading image previews
-6. not showing "Stage" voice channels  
+5. not ordering servers in the sidebar correctly due to the addition of folders
+6. not loading image previews
+7. not showing "Stage" voice channels  
    *(This is accomplished by making Ripcord think stages are regular voice channels. This means that there is no way to become a speaker, and no way to differentiate a stage from a regular voice channel)*
 
 Supports Ripcord 0.4.29 on Windows. [Supports Ripcord 0.4.29 on Linux, albeit with limited testing.](https://github.com/geniiii/ripcord-audio-hook/tree/linux)
