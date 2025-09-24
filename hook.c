@@ -147,6 +147,19 @@ static __attribute__((constructor)) void OnAttach(void) {
     PatchByte(receive_udp + 0x102, 74);
     PatchByte(receive_udp + 0x110, 8);
     PatchByte(receive_udp + 0x172, 72);
+	
+	// NOTE(geni): Discard invalid map keys instead of aborting. Thanks @muffinlord and @literally_saksham on Discord!
+	u8* from_etf_v = base + 0x123DD0;
+	PatchByte(from_etf_v + 0x3AD, 0xE9);
+	PatchByte(from_etf_v + 0x3AD + 1, 0xEE);
+	PatchByte(from_etf_v + 0x3AD + 2, 0xFE);
+	PatchByte(from_etf_v + 0x3AD + 3, 0xFF);
+	PatchByte(from_etf_v + 0x3AD + 4, 0xFF);
+	
+	// NOTE(geni): Disable gateway port splitting
+	u8* openvlconnwebsocket = base + 0x1547B0;
+	PatchByte(openvlconnwebsocket + 0x17, 0x10);
+	
     puts("Patched bytes");
 
     PatchString(base + 0x4E997D, S8Lit("cdn.discordapp.com/\0\0\0"));
