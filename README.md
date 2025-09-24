@@ -1,10 +1,10 @@
 # ripcord-audio-hook
 Fixes Ripcord:
-1. not connecting due to the binary ETF parser aborting upon discovering invalid/unhandled map keys
-2. reading RTP header extensions larger than 8 bytes as voice data, causing garbled audio in voice chats
-3. sending and receiving an old (?) version of the IP discovery packet, causing it to get stuck on "Routing..." when attempting to join voice channels
-4. creating malformed WebSocket gateway URIs, causing it to fail when connecting to voice channels
-5. not ordering servers in the sidebar correctly due to the addition of folders
+1. not connecting <sup>due to the binary ETF parser aborting upon discovering invalid/unhandled map keys</sup>
+2. having garbled audio in voice channels <sup>due to reading RTP header extensions larger than 8 bytes as voice data</sup>
+3. getting stuck on "Routing..." when attempting to join voice channels <sup>due to sending and receiving an old (?) version of the IP discovery packet</sup>
+4. failing to connect to voice channels <sup>due to creating malformed WebSocket gateway URIs</sup>
+5. not ordering servers in the sidebar correctly <sup>due to the addition of folders</sup>
 6. not loading image previews
 7. not showing "Stage" voice channels  
    *(This is accomplished by making Ripcord think stages are regular voice channels. This means that there is no way to become a speaker, and no way to differentiate a stage from a regular voice channel)*
@@ -12,15 +12,15 @@ Fixes Ripcord:
 Supports Ripcord 0.4.29 on Windows. [Supports Ripcord 0.4.29 on Linux, albeit with limited testing.](https://github.com/geniiii/ripcord-audio-hook/tree/linux)
 
 ## Usage
-Download the DLL file from [the Releases page](https://github.com/geniiii/ripcord-audio-hook/releases) and place it in your Ripcord directory.
+Download the DLL file from [the Releases page](https://github.com/geniiii/ripcord-audio-hook/releases) and place it in your Ripcord directory, or watch the video below if you don't understand:  
+<a href="https://www.youtube.com/watch?v=KwhXPrJ05Rw"><img src="https://github.com/user-attachments/assets/16c1caf4-0f1c-4c98-9c31-ffc916504717" width=640px></a>
 
 ## Building
-**If you don't know what you're doing, look at the Usage section above instead.**
-1. Install Visual Studio 2019 or newer
+### If you don't know what you're doing, look at the Usage section above instead.
+1. Install Visual Studio 2019 or newer with the C++ development tools
 2. Run `build.bat`
 
 ## Credits
-[@p0358](https://github.com/p0358) for writing [Northstar's `loader_wsock32_proxy`](https://github.com/R2Northstar/NorthstarLauncher/tree/main/loader_wsock32_proxy)  
 [@u130b8](https://github.com/u130b8) for fixing image previews  
-[@ouwou](https://github.com/ouwou) for determining the cause of garbled audio and suggesting hijacking `profapi.dll`  
+[@ouwou](https://github.com/ouwou) for determining the cause of garbled audio  
 [@muffinl0rd](https://github.com/muffinl0rd) for bypassing ETF parser abortion
